@@ -1,0 +1,16 @@
+pandas
+numpy
+bs4
+selenium
+black
+pylint
+mypy
+aiohttp
+requests
+webdriver-manager
+pymysql
+configparser
+faker
+undetected_chromedriver
+fake_useragent
+
