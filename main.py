@@ -1,28 +1,62 @@
 import pandas as pd
-from crawling_parsing.crawling_arch import DaumMovingElementLocation
+from multiprocessing import Pool
+from crawling_parsing.crawling_arch import (
+    DaumMovingElementLocation,
+    GoogleMovingElementsLocation,
+)
 
 
 def csv_saving(data: list, csv_file_name: str) -> pd.DataFrame:
-    """coin symbol csv saving
+    """Coin symbol CSV saving
 
     Args:
-        data (list): coinsymbol
-        csv_file_name (str): 파일명
+        data (list): Coin symbol
+        csv_file_name (str): File name
 
     Returns:
-        pd.DataFrame: dataframe
+        pd.DataFrame: DataFrame
     """
-    return pd.DataFrame(data).to_csv(
+    print(f"Saving data to {csv_file_name}")
+    pd.DataFrame(data).to_csv(
         csv_file_name,
-        index_label=False,
         index=False,
         encoding="utf-8-sig",
     )
+    print(f"Data saved to {csv_file_name}")
+    return pd.DataFrame(data)
 
 
-data = DaumMovingElementLocation("쿠팡파이낸셜", 2).page_news_data_glean()
+def flattened_data(data):
+    return [item for sublist in data for item in sublist]
 
-flattened_data = [item for sublist in data for item in sublist]
 
-# CSV 파일로 저장합니다.
-csv_saving(data=flattened_data, csv_file_name="news_data.csv")
+def save_csv_for_daum():
+    try:
+        print("Fetching Daum data...")
+        daum_data = DaumMovingElementLocation("쿠팡페이 사업", 3).page_news_data_glean()
+        data = flattened_data(daum_data)
+        csv_saving(data, "news_data_daum.csv")
+    except Exception as e:
+        print(f"Error in save_csv_for_daum: {e}")
+
+
+def save_csv_for_google():
+    try:
+        print("Fetching Google data...")
+        google_data = GoogleMovingElementsLocation("쿠팡페이 사업", 3).search_box()
+        data = flattened_data(google_data)
+        csv_saving(data, "news_data_google.csv")
+    except Exception as e:
+        print(f"Error in save_csv_for_google: {e}")
+
+
+if __name__ == "__main__":
+    try:
+        # Use multiprocessing Pool to run tasks in parallel
+        with Pool(processes=2) as pool:
+            pool.apply_async(save_csv_for_daum)
+            pool.apply_async(save_csv_for_google)
+            pool.close()
+            pool.join()
+    except Exception as e:
+        print(f"Error in multiprocessing: {e}")

@@ -30,12 +30,12 @@ ua = UserAgent()
 def chrome_option_injection() -> webdriver.Chrome:
     # 크롬 옵션 설정
     option_chrome = uc.ChromeOptions()
-    option_chrome.add_argument("headless")
-    option_chrome.add_argument("--disable-gpu")
-    option_chrome.add_argument("--disable-infobars")
-    option_chrome.add_argument("--disable-extensions")
-    option_chrome.add_argument("--no-sandbox")
-    option_chrome.add_argument("--disable-dev-shm-usage")
+    # option_chrome.add_argument("headless")
+    # option_chrome.add_argument("--disable-gpu")
+    # option_chrome.add_argument("--disable-infobars")
+    # option_chrome.add_argument("--disable-extensions")
+    # option_chrome.add_argument("--no-sandbox")
+    # option_chrome.add_argument("--disable-dev-shm-usage")
     option_chrome.add_argument(f"user-agent={ua.random}")
 
     caps = DesiredCapabilities().CHROME
@@ -85,7 +85,7 @@ def chrome_option_injection() -> webdriver.Chrome:
 
 
 def page_scroll_moving(
-    driver: webdriver.Chrome, scroll1: int, scroll2: int = 30
+    driver: webdriver.Chrome, scroll1: int, scroll2: int = 500
 ) -> None:
 
     def scroll_page(scroll_cal: int, scroll: int, with_delay: bool) -> None:
@@ -100,7 +100,6 @@ def page_scroll_moving(
     scroll_cal: float | int = prev_heigh / selected_scroll
 
     with_delay: bool = random.choice([True, False])
-
     scroll_page(scroll_cal, selected_scroll, with_delay)
 
 
